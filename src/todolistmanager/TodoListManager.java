@@ -41,6 +41,7 @@ public class TodoListManager extends javax.swing.JFrame {
         taskDetailsArea = new javax.swing.JTextArea();
         taskTitleField = new javax.swing.JTextField();
         taskTitleLabel = new javax.swing.JLabel();
+        taskNotesLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
@@ -116,7 +117,7 @@ public class TodoListManager extends javax.swing.JFrame {
 
         java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
         jPanel1Layout.columnWeights = new double[] {0.0, 1.0};
-        jPanel1Layout.rowWeights = new double[] {0.0, 1.0};
+        jPanel1Layout.rowWeights = new double[] {0.0, 0.0, 1.0};
         taskDetailsPanel.setLayout(jPanel1Layout);
 
         taskDetailsArea.setColumns(20);
@@ -125,7 +126,7 @@ public class TodoListManager extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 10);
@@ -134,15 +135,23 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 10);
         taskDetailsPanel.add(taskTitleField, gridBagConstraints);
 
         taskTitleLabel.setText("Task:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskTitleLabel, gridBagConstraints);
+
+        taskNotesLabel.setText("Notes:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        taskDetailsPanel.add(taskNotesLabel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -232,6 +241,7 @@ public class TodoListManager extends javax.swing.JFrame {
     private javax.swing.JLabel taskListLabel;
     private javax.swing.JPanel taskListPanel;
     private javax.swing.JScrollPane taskListScrollPane;
+    private javax.swing.JLabel taskNotesLabel;
     private javax.swing.JTextField taskTitleField;
     private javax.swing.JLabel taskTitleLabel;
     // End of variables declaration//GEN-END:variables
