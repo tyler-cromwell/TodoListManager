@@ -15,8 +15,8 @@ public class TodoListManager extends javax.swing.JFrame {
         initComponents();
 
         /* Finish initialization */
-        this.jTextArea1.setWrapStyleWord(true);
-        this.jTextArea1.setLineWrap(true);
+        this.taskDetailsArea.setWrapStyleWord(true);
+        this.taskDetailsArea.setLineWrap(true);
     }
 
     /**
@@ -36,8 +36,10 @@ public class TodoListManager extends javax.swing.JFrame {
         removeTaskButton = new javax.swing.JButton();
         taskListScrollPane = new javax.swing.JScrollPane();
         taskList = new javax.swing.JList<>();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        taskDetailsPanel = new javax.swing.JPanel();
+        taskDetailsScrollPane = new javax.swing.JScrollPane();
+        taskDetailsArea = new javax.swing.JTextArea();
+        taskTitleField = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
@@ -90,6 +92,11 @@ public class TodoListManager extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        taskList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                taskListValueChanged(evt);
+            }
+        });
         taskListScrollPane.setViewportView(taskList);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -105,14 +112,29 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 5);
         getContentPane().add(taskListPanel, gridBagConstraints);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        java.awt.GridBagLayout jPanel1Layout = new java.awt.GridBagLayout();
+        jPanel1Layout.columnWeights = new double[] {1.0};
+        jPanel1Layout.rowWeights = new double[] {0.0, 1.0};
+        taskDetailsPanel.setLayout(jPanel1Layout);
+
+        taskDetailsArea.setColumns(20);
+        taskDetailsArea.setRows(5);
+        taskDetailsScrollPane.setViewportView(taskDetailsArea);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 10);
+        taskDetailsPanel.add(taskDetailsScrollPane, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 10);
+        taskDetailsPanel.add(taskTitleField, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 10);
-        getContentPane().add(jScrollPane2, gridBagConstraints);
+        getContentPane().add(taskDetailsPanel, gridBagConstraints);
 
         fileMenu.setText("File");
 
@@ -161,6 +183,10 @@ public class TodoListManager extends javax.swing.JFrame {
         System.out.println("loadMenuItemActionPerformed: Loading from data-store");
     }//GEN-LAST:event_loadMenuItemActionPerformed
 
+    private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
+        this.taskTitleField.setText(this.taskList.getSelectedValue());
+    }//GEN-LAST:event_taskListValueChanged
+
     /**
      * @param args the command line arguments
      */
@@ -182,16 +208,18 @@ public class TodoListManager extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTaskButton;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JButton removeTaskButton;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JPanel taskButtonPanel;
+    private javax.swing.JTextArea taskDetailsArea;
+    private javax.swing.JPanel taskDetailsPanel;
+    private javax.swing.JScrollPane taskDetailsScrollPane;
     private javax.swing.JList<String> taskList;
     private javax.swing.JLabel taskListLabel;
     private javax.swing.JPanel taskListPanel;
     private javax.swing.JScrollPane taskListScrollPane;
+    private javax.swing.JTextField taskTitleField;
     // End of variables declaration//GEN-END:variables
 }
