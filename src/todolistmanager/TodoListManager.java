@@ -40,6 +40,7 @@ public class TodoListManager extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        loadMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -115,6 +116,14 @@ public class TodoListManager extends javax.swing.JFrame {
 
         fileMenu.setText("File");
 
+        loadMenuItem.setText("Load");
+        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(loadMenuItem);
+
         saveMenuItem.setText("Save");
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -148,6 +157,10 @@ public class TodoListManager extends javax.swing.JFrame {
         System.out.println("saveMenuItemActionPerformed: Saving to data-store");
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
+    private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
+        System.out.println("loadMenuItemActionPerformed: Loading from data-store");
+    }//GEN-LAST:event_loadMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -171,6 +184,7 @@ public class TodoListManager extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JButton removeTaskButton;
     private javax.swing.JMenuItem saveMenuItem;
