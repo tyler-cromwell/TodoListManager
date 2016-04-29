@@ -138,7 +138,7 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 10);
         taskDetailsPanel.add(taskTitleField, gridBagConstraints);
 
-        taskTitleLabel.setText("Task:");
+        taskTitleLabel.setText("Title:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
