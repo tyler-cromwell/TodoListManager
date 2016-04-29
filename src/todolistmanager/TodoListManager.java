@@ -1,18 +1,29 @@
 package todolistmanager;
 
 import java.awt.Dimension;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 /**
  * @author Tyler Cromwell
  */
 public class TodoListManager extends javax.swing.JFrame {
+    private final DefaultListModel listModel;
 
     /**
      * Creates new form TodoListManager
      */
     public TodoListManager() {
         initComponents();
+
+        /* Force DefaultListModel and save it */
+        this.taskList.setModel(new DefaultListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+            public void setElementAt(String element, int i) { strings[i] = (String) element; }
+        });
+        this.listModel = (DefaultListModel) this.taskList.getModel();
 
         /* Finish initialization */
         this.taskDetailsArea.setWrapStyleWord(true);
@@ -94,6 +105,7 @@ public class TodoListManager extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        taskList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         taskList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 taskListValueChanged(evt);
@@ -131,6 +143,12 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 10);
         taskDetailsPanel.add(taskDetailsScrollPane, gridBagConstraints);
+
+        taskTitleField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                taskTitleFieldActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -207,6 +225,19 @@ public class TodoListManager extends javax.swing.JFrame {
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
         this.taskTitleField.setText(this.taskList.getSelectedValue());
     }//GEN-LAST:event_taskListValueChanged
+
+    private void taskTitleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskTitleFieldActionPerformed
+        if (this.taskList.getSelectedValue() != null) {
+            String title = this.taskTitleField.getText();
+            int index = this.taskList.getSelectedIndex();
+
+            this.listModel.setElementAt(title, index);
+            this.taskList.setModel(this.listModel);
+            this.taskTitleField.setText(title);
+        } else {
+            // Either add new item or display warning
+        }
+    }//GEN-LAST:event_taskTitleFieldActionPerformed
 
     /**
      * @param args the command line arguments
