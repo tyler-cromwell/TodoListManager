@@ -24,12 +24,6 @@ public class TodoListManager extends javax.swing.JFrame {
         this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
 
         /* Finish task list initialization */
-        this.taskList.setModel(new DefaultListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-            public void setElementAt(String element, int i) { strings[i] = (String) element; }
-        });
         this.listModel = (DefaultListModel) this.taskList.getModel();
 
         /* Finish notes initialization */
@@ -109,6 +103,12 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         taskListPanel.add(taskButtonPanel, gridBagConstraints);
 
+        taskList.setModel(new DefaultListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+            public void setElementAt(String element, int i) { strings[i] = (String) element; }
+        });
         taskList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         taskList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
