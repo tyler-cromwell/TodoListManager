@@ -272,6 +272,8 @@ public class TodoListManager extends javax.swing.JFrame {
                     new Dimension(main.getPreferredSize().width,
                     main.getPreferredSize().height + 10)
                 );
+                main.setSize(main.getMinimumSize());
+                main.pack();
                 main.setVisible(true);
                 main.setLocationRelativeTo(null);
             }
