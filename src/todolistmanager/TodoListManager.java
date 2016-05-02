@@ -56,6 +56,7 @@ public class TodoListManager extends javax.swing.JFrame {
         taskNotesLabel = new javax.swing.JLabel();
         taskPriorityLabel = new javax.swing.JLabel();
         taskPriorityComboBox = new javax.swing.JComboBox<>();
+        taskDoneCheckBox = new javax.swing.JCheckBox();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
@@ -184,13 +185,25 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskPriorityLabel, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 10);
         taskDetailsPanel.add(taskPriorityComboBox, gridBagConstraints);
+
+        taskDoneCheckBox.setText("Is Done?");
+        taskDoneCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                taskDoneCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        taskDetailsPanel.add(taskDoneCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -260,6 +273,10 @@ public class TodoListManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_taskTitleFieldActionPerformed
 
+    private void taskDoneCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskDoneCheckBoxActionPerformed
+        System.out.println("jCheckBox1ActionPerformed: Toggle done status");
+    }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -291,6 +308,7 @@ public class TodoListManager extends javax.swing.JFrame {
     private javax.swing.JTextArea taskDetailsArea;
     private javax.swing.JPanel taskDetailsPanel;
     private javax.swing.JScrollPane taskDetailsScrollPane;
+    private javax.swing.JCheckBox taskDoneCheckBox;
     private javax.swing.JList<String> taskList;
     private javax.swing.JLabel taskListLabel;
     private javax.swing.JPanel taskListPanel;
