@@ -258,6 +258,7 @@ public class TodoListManager extends javax.swing.JFrame {
 
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
         this.taskTitleField.setText(this.taskList.getSelectedValue());
+        /* Update all fields */
     }//GEN-LAST:event_taskListValueChanged
 
     private void taskTitleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskTitleFieldActionPerformed
@@ -269,12 +270,30 @@ public class TodoListManager extends javax.swing.JFrame {
             this.taskList.setModel(this.listModel);
             this.taskTitleField.setText(title);
         } else {
-            // Either add new item or display warning
+            /* Either add new item or display warning */
         }
     }//GEN-LAST:event_taskTitleFieldActionPerformed
 
     private void taskDoneCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskDoneCheckBoxActionPerformed
-        System.out.println("jCheckBox1ActionPerformed: Toggle done status");
+        int index = this.taskList.getSelectedIndex();
+
+        if (index >= 0) {
+            String selected = this.listModel.getElementAt(index).toString();
+
+            if (this.taskDoneCheckBox.isSelected() && !selected.matches(".+ \u2713")) {
+                selected += " \u2713";
+                /* Set task done */
+            } else {
+                int length = selected.length();
+                selected = selected.substring(0, length-2);
+                /* Unset task done */
+            }
+
+            this.listModel.setElementAt(selected, index);
+            this.taskList.setModel(this.listModel);
+        }
+
+        this.taskDoneCheckBox.setSelected(false);
     }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
 
     /**
