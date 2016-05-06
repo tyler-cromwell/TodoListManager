@@ -1,6 +1,5 @@
 package todolistmanager;
 
-import java.awt.Dimension;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
@@ -71,6 +70,8 @@ public class TodoListManager extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("To-Do List Manager");
+        setMinimumSize(new java.awt.Dimension(464, 261));
+        setPreferredSize(new java.awt.Dimension(464, 261));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWeights = new double[] {0.0, 1.0};
         layout.rowWeights = new double[] {1.0};
@@ -111,12 +112,7 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         taskListPanel.add(taskButtonPanel, gridBagConstraints);
 
-        taskList.setModel(new DefaultListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-            public void setElementAt(String element, int i) { strings[i] = (String) element; }
-        });
+        taskList.setModel(new DefaultListModel());
         taskList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         taskList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -129,11 +125,12 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         taskListPanel.add(taskListScrollPane, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 5);
@@ -213,6 +210,8 @@ public class TodoListManager extends javax.swing.JFrame {
         taskDetailsPanel.add(taskDoneCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(taskDetailsPanel, gridBagConstraints);
 
@@ -250,16 +249,16 @@ public class TodoListManager extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTaskButtonActionPerformed
-        System.out.println("addTaskButtonActionPerformed: Adding a new task");
+        this.listModel.addElement("New Item");
     }//GEN-LAST:event_addTaskButtonActionPerformed
 
     private void removeTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTaskButtonActionPerformed
-        String selected = this.taskList.getSelectedValue();
+        int selected = this.taskList.getSelectedIndex();
 
-        if (selected == null) {
+        if (selected == -1) {
             JOptionPane.showMessageDialog(this, "You must select a task", "Remove Task", JOptionPane.WARNING_MESSAGE);
         } else {
-            System.out.println("removeTaskButtonActionPerformed: Removing task: "+ this.taskList.getSelectedValue());
+            this.listModel.remove(selected);
         }
     }//GEN-LAST:event_removeTaskButtonActionPerformed
 
@@ -272,8 +271,19 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_loadMenuItemActionPerformed
 
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
-        this.taskTitleField.setText(this.taskList.getSelectedValue());
-        /* Update all fields */
+        String selected = this.taskList.getSelectedValue();
+
+        if (selected != null) {
+            this.taskTitleField.setText(selected);
+
+            if (selected.matches(".+ \u2713")) {
+                this.taskDoneCheckBox.setSelected(true);
+            } else {
+                this.taskDoneCheckBox.setSelected(false);
+            }
+
+            /* Update all fields */
+        }
     }//GEN-LAST:event_taskListValueChanged
 
     private void taskTitleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskTitleFieldActionPerformed
@@ -282,7 +292,6 @@ public class TodoListManager extends javax.swing.JFrame {
             int index = this.taskList.getSelectedIndex();
 
             this.listModel.setElementAt(title, index);
-            this.taskList.setModel(this.listModel);
             this.taskTitleField.setText(title);
         } else {
             /* Either add new item or display warning */
@@ -305,10 +314,7 @@ public class TodoListManager extends javax.swing.JFrame {
             }
 
             this.listModel.setElementAt(selected, index);
-            this.taskList.setModel(this.listModel);
         }
-
-        this.taskDoneCheckBox.setSelected(false);
     }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
 
     private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
@@ -342,8 +348,9 @@ public class TodoListManager extends javax.swing.JFrame {
         String className = UIManager.getSystemLookAndFeelClassName();
         try {
             UIManager.setLookAndFeel(className);
-        } catch (ClassNotFoundException | InstantiationException |
-                 IllegalAccessException | UnsupportedLookAndFeelException ex) {
+        }
+        catch (ClassNotFoundException | InstantiationException |
+               IllegalAccessException | UnsupportedLookAndFeelException ex) {
             System.out.println(ex.getMessage());
             return;
         }
@@ -352,11 +359,6 @@ public class TodoListManager extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 TodoListManager main = new TodoListManager();
-                main.setMinimumSize(
-                    new Dimension(main.getPreferredSize().width,
-                    main.getPreferredSize().height + 10)
-                );
-                main.setSize(main.getMinimumSize());
                 main.pack();
                 main.setVisible(true);
                 main.setLocationRelativeTo(null);
