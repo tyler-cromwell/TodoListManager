@@ -1,8 +1,13 @@
 package todolistmanager;
 
 import java.awt.Dimension;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  * @author Tyler Cromwell
@@ -61,6 +66,7 @@ public class TodoListManager extends javax.swing.JFrame {
         fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
+        printMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("To-Do List Manager");
@@ -227,6 +233,14 @@ public class TodoListManager extends javax.swing.JFrame {
         });
         fileMenu.add(saveMenuItem);
 
+        printMenuItem.setText("Print");
+        printMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(printMenuItem);
+
         menuBar.add(fileMenu);
 
         setJMenuBar(menuBar);
@@ -296,6 +310,29 @@ public class TodoListManager extends javax.swing.JFrame {
         this.taskDoneCheckBox.setSelected(false);
     }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
 
+    private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        
+        if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        File file = chooser.getSelectedFile().getAbsoluteFile();
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(new TaskListPrinter(file));
+
+        try {
+            if (job.printDialog()) {
+                job.print();
+            }
+        }
+        catch(PrinterException pe) {
+            if (pe.getMessage() != null) {
+                JOptionPane.showMessageDialog(this, pe.getMessage(), "Print", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_printMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -321,6 +358,7 @@ public class TodoListManager extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem printMenuItem;
     private javax.swing.JButton removeTaskButton;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JPanel taskButtonPanel;
