@@ -252,7 +252,15 @@ public class TodoListManager extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTaskButtonActionPerformed
+        /* Clear the fields */
+        this.taskTitleField.setText("");
+        this.taskDoneCheckBox.setSelected(false);
+        this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
+        this.taskDetailsArea.setText("");
+
+        /* Add and select the new item */
         this.listModel.addElement("New Item");
+        this.taskList.setSelectedIndex(this.listModel.getSize()-1);
     }//GEN-LAST:event_addTaskButtonActionPerformed
 
     private void removeTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTaskButtonActionPerformed
@@ -284,8 +292,13 @@ public class TodoListManager extends javax.swing.JFrame {
             } else {
                 this.taskDoneCheckBox.setSelected(false);
             }
-
-            /* Update all fields */
+        }
+        else {
+            /* Clear the fields */
+            this.taskTitleField.setText("");
+            this.taskDoneCheckBox.setSelected(false);
+            this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
+            this.taskDetailsArea.setText("");
         }
     }//GEN-LAST:event_taskListValueChanged
 
