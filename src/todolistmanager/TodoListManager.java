@@ -269,7 +269,12 @@ public class TodoListManager extends javax.swing.JFrame {
         if (selected == -1) {
             JOptionPane.showMessageDialog(this, "You must select a task", "Remove Task", JOptionPane.WARNING_MESSAGE);
         } else {
-            this.listModel.remove(selected);
+            int choice = JOptionPane.showConfirmDialog(this, "Are you sure?");
+
+            if (choice == JOptionPane.YES_OPTION) {
+                this.listModel.remove(selected);
+                /* Delete object */
+            }
         }
     }//GEN-LAST:event_removeTaskButtonActionPerformed
 
