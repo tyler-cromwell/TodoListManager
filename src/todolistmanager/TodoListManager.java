@@ -9,11 +9,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author Tyler Cromwell
  */
 public class TodoListManager extends javax.swing.JFrame {
+    private static final String PROGRAM_DIR = "todo";
     private final DefaultListModel listModel;
 
     /**
@@ -35,8 +37,8 @@ public class TodoListManager extends javax.swing.JFrame {
         /* Finish notes initialization */
         this.taskDetailsArea.setWrapStyleWord(true);
         this.taskDetailsArea.setLineWrap(true);
-        
-        File dir = new File("Our_file");
+
+        File dir = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
         dir.mkdir();
     }
 
@@ -283,19 +285,33 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_removeTaskButtonActionPerformed
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-        System.out.println("saveMenuItemActionPerformed: Saving to data-store");
+        File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
+        FileSystemView cfsv = new CustomFileSystemView(root);
+        JFileChooser chooser = new JFileChooser(cfsv);
+        int option = chooser.showSaveDialog(this);
+
+        switch (option) {
+            case JFileChooser.ERROR_OPTION:
+                JOptionPane.showMessageDialog(this, "Failed to save file", "Save", JOptionPane.WARNING_MESSAGE);
+                return;
+            case JFileChooser.CANCEL_OPTION:
+                return;
+            default:
+                break;
+        }
+
         PrintWriter pr;
         try {
-            pr = new PrintWriter("Our_file/save_test.txt");
-            for(int i=0; i<listModel.getSize(); i++){
+            pr = new PrintWriter(chooser.getSelectedFile());
+            for(int i = 0; i < this.listModel.getSize(); i++) {
                 pr.println("\u2022" + this.listModel.get(i).toString());
                 //pr.println("\t" + taskDetailsArea.getText());
             }
             pr.close();
-        } catch(Exception e) {
+        }
+        catch(Exception e) {
             System.out.println(e.getMessage());
         }
-        
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
@@ -355,10 +371,25 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
 
     private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        
-        if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
-            return;
+        File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
+        FileSystemView cfsv = new CustomFileSystemView(root);
+        JFileChooser chooser = new JFileChooser(cfsv);
+        int option = chooser.showOpenDialog(this);
+
+        switch (option) {
+            case JFileChooser.ERROR_OPTION:
+                JOptionPane.showMessageDialog(this, "Failed to print file", "Print", JOptionPane.WARNING_MESSAGE);
+                return;
+            case JFileChooser.CANCEL_OPTION:
+                return;
+            case JFileChooser.APPROVE_OPTION:
+                if (chooser.getSelectedFile().getAbsoluteFile().exists() == false) {
+                    JOptionPane.showMessageDialog(this, "File does not exist", "Print", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                break;
+            default:
+                break;
         }
 
         File file = chooser.getSelectedFile().getAbsoluteFile();
