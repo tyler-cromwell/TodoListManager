@@ -4,6 +4,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -17,6 +18,7 @@ import javax.swing.filechooser.FileSystemView;
 public class TodoListManager extends javax.swing.JFrame {
     private static final String PROGRAM_DIR = "todo";
     private final DefaultListModel listModel;
+    private final ArrayList<Task> tasks;
 
     /**
      * Creates new form TodoListManager
@@ -38,6 +40,10 @@ public class TodoListManager extends javax.swing.JFrame {
         this.taskDetailsArea.setWrapStyleWord(true);
         this.taskDetailsArea.setLineWrap(true);
 
+        /* Initialize task array */
+        this.tasks = new ArrayList();
+
+        /* Create list folder */
         File dir = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
         dir.mkdir();
     }
@@ -267,6 +273,7 @@ public class TodoListManager extends javax.swing.JFrame {
         /* Add and select the new item */
         this.listModel.addElement("New Item");
         this.taskList.setSelectedIndex(this.listModel.getSize()-1);
+        this.tasks.add(new Task("New Item"));
     }//GEN-LAST:event_addTaskButtonActionPerformed
 
     private void removeTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTaskButtonActionPerformed
@@ -274,12 +281,13 @@ public class TodoListManager extends javax.swing.JFrame {
 
         if (selected == -1) {
             JOptionPane.showMessageDialog(this, "You must select a task", "Remove Task", JOptionPane.WARNING_MESSAGE);
-        } else {
+        }
+        else {
             int choice = JOptionPane.showConfirmDialog(this, "Are you sure?");
 
             if (choice == JOptionPane.YES_OPTION) {
                 this.listModel.remove(selected);
-                /* Delete object */
+                this.tasks.remove(selected);
             }
         }
     }//GEN-LAST:event_removeTaskButtonActionPerformed
@@ -304,7 +312,7 @@ public class TodoListManager extends javax.swing.JFrame {
         try {
             pr = new PrintWriter(chooser.getSelectedFile());
             for(int i = 0; i < this.listModel.getSize(); i++) {
-                pr.println("\u2022" + this.listModel.get(i).toString());
+                pr.println("\u2022" + this.tasks.get(i).getTitle());
                 //pr.println("\t" + taskDetailsArea.getText());
             }
             pr.close();
@@ -346,6 +354,7 @@ public class TodoListManager extends javax.swing.JFrame {
 
             this.listModel.setElementAt(title, index);
             this.taskTitleField.setText(title);
+            this.tasks.get(index).setTitle(title);
         } else {
             /* Either add new item or display warning */
         }
@@ -359,11 +368,11 @@ public class TodoListManager extends javax.swing.JFrame {
 
             if (this.taskDoneCheckBox.isSelected() && !selected.matches(".+ \u2713")) {
                 selected += " \u2713";
-                /* Set task done */
+                this.tasks.get(index).setIsDone(true);
             } else {
                 int length = selected.length();
                 selected = selected.substring(0, length-2);
-                /* Unset task done */
+                this.tasks.get(index).setIsDone(false);
             }
 
             this.listModel.setElementAt(selected, index);

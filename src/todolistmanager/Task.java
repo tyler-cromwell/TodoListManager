@@ -1,68 +1,50 @@
 package todolistmanager;
 
 /**
- * @author Souley Bane
+ * @author Souley Bane, Tyler Cromwell
  */
 public class Task {
-    
-    public Task(String taskDetails){
-        
-    } 
-    
-    //Task Details
-    private String taskDetails;
-    
-    public String getTaskDetails(){
-        return taskDetails;
-    }
-    
-    public String setTaskDetails(String TaskDetails){
-        this.taskDetails = taskDetails;
-        return taskDetails;
-    }
-    
-    //Title
-    private String Title;
+    private String title;
+    private int priority;
+    private boolean isDone;
+    private String notes;
 
+    public Task(String title) {
+        this.title = title;
+        this.priority = Priority.NORMAL.ordinal();
+        this.isDone = false;
+        this.notes = "";
+    }
+    
     public String getTitle() {
-        return Title;
+        return this.title;
     }
-
-    public void setTitle(String Title) {
-        this.Title = Title;
-    }
-    
-    //Priority 
-    private int Priority;
 
     public int getPriority() {
-        return Priority;
+        return this.priority;
     }
-
-    public void setPriority(int Priority) {
-        this.Priority = Priority;
-    }
-
-    //Notes 
-    private String notes;
     
     public String getNotes() {
-        return notes;
+        return this.notes;
+    }
+    
+    public boolean getIsDone(){
+        return this.isDone;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public void setIsDone(boolean isDone){
+        this.isDone = isDone;
     }
 
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-    
-    //Is it done
-    private boolean isDone;
-    
-    public boolean getisDone(){
-        return isDone;
-    }
-    
-    public boolean setisDone(){
-        this.isDone = isDone;
-        return isDone;
     }
 }
