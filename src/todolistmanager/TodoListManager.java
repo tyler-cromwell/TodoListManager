@@ -1,8 +1,13 @@
 package todolistmanager;
 
-import java.awt.Dimension;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * @author Tyler Cromwell
@@ -61,9 +66,12 @@ public class TodoListManager extends javax.swing.JFrame {
         fileMenu = new javax.swing.JMenu();
         loadMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
+        printMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("To-Do List Manager");
+        setMinimumSize(new java.awt.Dimension(464, 261));
+        setPreferredSize(new java.awt.Dimension(464, 261));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWeights = new double[] {0.0, 1.0};
         layout.rowWeights = new double[] {1.0};
@@ -104,12 +112,7 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         taskListPanel.add(taskButtonPanel, gridBagConstraints);
 
-        taskList.setModel(new DefaultListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-            public void setElementAt(String element, int i) { strings[i] = (String) element; }
-        });
+        taskList.setModel(new DefaultListModel());
         taskList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         taskList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -122,11 +125,12 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         taskListPanel.add(taskListScrollPane, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 5);
@@ -206,11 +210,14 @@ public class TodoListManager extends javax.swing.JFrame {
         taskDetailsPanel.add(taskDoneCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(taskDetailsPanel, gridBagConstraints);
 
         fileMenu.setText("File");
 
+        loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
         loadMenuItem.setText("Load");
         loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -219,6 +226,7 @@ public class TodoListManager extends javax.swing.JFrame {
         });
         fileMenu.add(loadMenuItem);
 
+        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setText("Save");
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -226,6 +234,15 @@ public class TodoListManager extends javax.swing.JFrame {
             }
         });
         fileMenu.add(saveMenuItem);
+
+        printMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        printMenuItem.setText("Print");
+        printMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(printMenuItem);
 
         menuBar.add(fileMenu);
 
@@ -235,16 +252,29 @@ public class TodoListManager extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTaskButtonActionPerformed
-        System.out.println("addTaskButtonActionPerformed: Adding a new task");
+        /* Clear the fields */
+        this.taskTitleField.setText("");
+        this.taskDoneCheckBox.setSelected(false);
+        this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
+        this.taskDetailsArea.setText("");
+
+        /* Add and select the new item */
+        this.listModel.addElement("New Item");
+        this.taskList.setSelectedIndex(this.listModel.getSize()-1);
     }//GEN-LAST:event_addTaskButtonActionPerformed
 
     private void removeTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTaskButtonActionPerformed
-        String selected = this.taskList.getSelectedValue();
+        int selected = this.taskList.getSelectedIndex();
 
-        if (selected == null) {
+        if (selected == -1) {
             JOptionPane.showMessageDialog(this, "You must select a task", "Remove Task", JOptionPane.WARNING_MESSAGE);
         } else {
-            System.out.println("removeTaskButtonActionPerformed: Removing task: "+ this.taskList.getSelectedValue());
+            int choice = JOptionPane.showConfirmDialog(this, "Are you sure?");
+
+            if (choice == JOptionPane.YES_OPTION) {
+                this.listModel.remove(selected);
+                /* Delete object */
+            }
         }
     }//GEN-LAST:event_removeTaskButtonActionPerformed
 
@@ -257,7 +287,24 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_loadMenuItemActionPerformed
 
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
-        this.taskTitleField.setText(this.taskList.getSelectedValue());
+        String selected = this.taskList.getSelectedValue();
+
+        if (selected != null) {
+            this.taskTitleField.setText(selected);
+
+            if (selected.matches(".+ \u2713")) {
+                this.taskDoneCheckBox.setSelected(true);
+            } else {
+                this.taskDoneCheckBox.setSelected(false);
+            }
+        }
+        else {
+            /* Clear the fields */
+            this.taskTitleField.setText("");
+            this.taskDoneCheckBox.setSelected(false);
+            this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
+            this.taskDetailsArea.setText("");
+        }
     }//GEN-LAST:event_taskListValueChanged
 
     private void taskTitleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskTitleFieldActionPerformed
@@ -266,30 +313,73 @@ public class TodoListManager extends javax.swing.JFrame {
             int index = this.taskList.getSelectedIndex();
 
             this.listModel.setElementAt(title, index);
-            this.taskList.setModel(this.listModel);
             this.taskTitleField.setText(title);
         } else {
-            // Either add new item or display warning
+            /* Either add new item or display warning */
         }
     }//GEN-LAST:event_taskTitleFieldActionPerformed
 
     private void taskDoneCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskDoneCheckBoxActionPerformed
-        System.out.println("jCheckBox1ActionPerformed: Toggle done status");
+        int index = this.taskList.getSelectedIndex();
+
+        if (index >= 0) {
+            String selected = this.listModel.getElementAt(index).toString();
+
+            if (this.taskDoneCheckBox.isSelected() && !selected.matches(".+ \u2713")) {
+                selected += " \u2713";
+                /* Set task done */
+            } else {
+                int length = selected.length();
+                selected = selected.substring(0, length-2);
+                /* Unset task done */
+            }
+
+            this.listModel.setElementAt(selected, index);
+        }
     }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
+
+    private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        
+        if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        File file = chooser.getSelectedFile().getAbsoluteFile();
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(new TaskListPrinter(file));
+
+        try {
+            if (job.printDialog()) {
+                job.print();
+            }
+        }
+        catch(PrinterException pe) {
+            if (pe.getMessage() != null) {
+                JOptionPane.showMessageDialog(this, pe.getMessage(), "Print", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_printMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        /* Use the operating systems Look & Feel */
+        String className = UIManager.getSystemLookAndFeelClassName();
+        try {
+            UIManager.setLookAndFeel(className);
+        }
+        catch (ClassNotFoundException | InstantiationException |
+               IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            System.out.println(ex.getMessage());
+            return;
+        }
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 TodoListManager main = new TodoListManager();
-                main.setMinimumSize(
-                    new Dimension(main.getPreferredSize().width,
-                    main.getPreferredSize().height + 10)
-                );
-                main.setSize(main.getMinimumSize());
                 main.pack();
                 main.setVisible(true);
                 main.setLocationRelativeTo(null);
@@ -302,6 +392,7 @@ public class TodoListManager extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem printMenuItem;
     private javax.swing.JButton removeTaskButton;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JPanel taskButtonPanel;
