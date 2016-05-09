@@ -4,17 +4,21 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author Tyler Cromwell
  */
 public class TodoListManager extends javax.swing.JFrame {
+    private static final String PROGRAM_DIR = "todo";
     private final DefaultListModel listModel;
+    private final ArrayList<Task> tasks;
 
     /**
      * Creates new form TodoListManager
@@ -35,8 +39,12 @@ public class TodoListManager extends javax.swing.JFrame {
         /* Finish notes initialization */
         this.taskDetailsArea.setWrapStyleWord(true);
         this.taskDetailsArea.setLineWrap(true);
-        
-        File dir = new File("Our_file");
+
+        /* Initialize task array */
+        this.tasks = new ArrayList();
+
+        /* Create list folder */
+        File dir = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
         dir.mkdir();
     }
 
@@ -265,6 +273,7 @@ public class TodoListManager extends javax.swing.JFrame {
         /* Add and select the new item */
         this.listModel.addElement("New Item");
         this.taskList.setSelectedIndex(this.listModel.getSize()-1);
+        this.tasks.add(new Task("New Item"));
     }//GEN-LAST:event_addTaskButtonActionPerformed
 
     private void removeTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTaskButtonActionPerformed
@@ -272,25 +281,45 @@ public class TodoListManager extends javax.swing.JFrame {
 
         if (selected == -1) {
             JOptionPane.showMessageDialog(this, "You must select a task", "Remove Task", JOptionPane.WARNING_MESSAGE);
-        } else {
-            this.listModel.remove(selected);
+        }
+        else {
+            int choice = JOptionPane.showConfirmDialog(this, "Are you sure?");
+
+            if (choice == JOptionPane.YES_OPTION) {
+                this.listModel.remove(selected);
+                this.tasks.remove(selected);
+            }
         }
     }//GEN-LAST:event_removeTaskButtonActionPerformed
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-        System.out.println("saveMenuItemActionPerformed: Saving to data-store");
+        File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
+        FileSystemView cfsv = new CustomFileSystemView(root);
+        JFileChooser chooser = new JFileChooser(cfsv);
+        int option = chooser.showSaveDialog(this);
+
+        switch (option) {
+            case JFileChooser.ERROR_OPTION:
+                JOptionPane.showMessageDialog(this, "Failed to save file", "Save", JOptionPane.WARNING_MESSAGE);
+                return;
+            case JFileChooser.CANCEL_OPTION:
+                return;
+            default:
+                break;
+        }
+
         PrintWriter pr;
         try {
-            pr = new PrintWriter("Our_file/save_test.txt");
-            for(int i=0; i<listModel.getSize(); i++){
-                pr.println("\u2022" + this.listModel.get(i).toString());
+            pr = new PrintWriter(chooser.getSelectedFile());
+            for(int i = 0; i < this.listModel.getSize(); i++) {
+                pr.println("\u2022" + this.tasks.get(i).getTitle());
                 //pr.println("\t" + taskDetailsArea.getText());
             }
             pr.close();
-        } catch(Exception e) {
+        }
+        catch(Exception e) {
             System.out.println(e.getMessage());
         }
-        
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
@@ -325,6 +354,7 @@ public class TodoListManager extends javax.swing.JFrame {
 
             this.listModel.setElementAt(title, index);
             this.taskTitleField.setText(title);
+            this.tasks.get(index).setTitle(title);
         } else {
             /* Either add new item or display warning */
         }
@@ -338,11 +368,11 @@ public class TodoListManager extends javax.swing.JFrame {
 
             if (this.taskDoneCheckBox.isSelected() && !selected.matches(".+ \u2713")) {
                 selected += " \u2713";
-                /* Set task done */
+                this.tasks.get(index).setIsDone(true);
             } else {
                 int length = selected.length();
                 selected = selected.substring(0, length-2);
-                /* Unset task done */
+                this.tasks.get(index).setIsDone(false);
             }
 
             this.listModel.setElementAt(selected, index);
@@ -350,10 +380,25 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
 
     private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        
-        if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
-            return;
+        File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
+        FileSystemView cfsv = new CustomFileSystemView(root);
+        JFileChooser chooser = new JFileChooser(cfsv);
+        int option = chooser.showOpenDialog(this);
+
+        switch (option) {
+            case JFileChooser.ERROR_OPTION:
+                JOptionPane.showMessageDialog(this, "Failed to print file", "Print", JOptionPane.WARNING_MESSAGE);
+                return;
+            case JFileChooser.CANCEL_OPTION:
+                return;
+            case JFileChooser.APPROVE_OPTION:
+                if (chooser.getSelectedFile().getAbsoluteFile().exists() == false) {
+                    JOptionPane.showMessageDialog(this, "File does not exist", "Print", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                break;
+            default:
+                break;
         }
 
         File file = chooser.getSelectedFile().getAbsoluteFile();
