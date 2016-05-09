@@ -3,6 +3,7 @@ package todolistmanager;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.PrintWriter;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -34,6 +35,9 @@ public class TodoListManager extends javax.swing.JFrame {
         /* Finish notes initialization */
         this.taskDetailsArea.setWrapStyleWord(true);
         this.taskDetailsArea.setLineWrap(true);
+        
+        File dir = new File("Our_file");
+        dir.mkdir();
     }
 
     /**
@@ -280,6 +284,18 @@ public class TodoListManager extends javax.swing.JFrame {
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
         System.out.println("saveMenuItemActionPerformed: Saving to data-store");
+        PrintWriter pr;
+        try {
+            pr = new PrintWriter("Our_file/save_test.txt");
+            for(int i=0; i<listModel.getSize(); i++){
+                pr.println("\u2022" + this.listModel.get(i).toString());
+                //pr.println("\t" + taskDetailsArea.getText());
+            }
+            pr.close();
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
