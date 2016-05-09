@@ -82,8 +82,8 @@ public class TodoListManager extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("To-Do List Manager");
-        setMinimumSize(new java.awt.Dimension(464, 261));
-        setPreferredSize(new java.awt.Dimension(464, 261));
+        setMinimumSize(new java.awt.Dimension(460, 260));
+        setPreferredSize(new java.awt.Dimension(460, 260));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWeights = new double[] {0.0, 1.0};
         layout.rowWeights = new double[] {1.0};
@@ -209,11 +209,6 @@ public class TodoListManager extends javax.swing.JFrame {
         taskDetailsPanel.add(taskPriorityComboBox, gridBagConstraints);
 
         taskDoneCheckBox.setText("Is Done?");
-        taskDoneCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                taskDoneCheckBoxActionPerformed(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -271,9 +266,9 @@ public class TodoListManager extends javax.swing.JFrame {
         this.taskDetailsArea.setText("");
 
         /* Add and select the new item */
+        this.tasks.add(new Task("New Item"));
         this.listModel.addElement("New Item");
         this.taskList.setSelectedIndex(this.listModel.getSize()-1);
-        this.tasks.add(new Task("New Item"));
     }//GEN-LAST:event_addTaskButtonActionPerformed
 
     private void removeTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTaskButtonActionPerformed
@@ -286,8 +281,8 @@ public class TodoListManager extends javax.swing.JFrame {
             int choice = JOptionPane.showConfirmDialog(this, "Are you sure?");
 
             if (choice == JOptionPane.YES_OPTION) {
-                this.listModel.remove(selected);
                 this.tasks.remove(selected);
+                this.listModel.remove(selected);
             }
         }
     }//GEN-LAST:event_removeTaskButtonActionPerformed
@@ -327,16 +322,16 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_loadMenuItemActionPerformed
 
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
-        String selected = this.taskList.getSelectedValue();
+        int index = this.taskList.getSelectedIndex();
 
-        if (selected != null) {
-            this.taskTitleField.setText(selected);
+        if (index > -1) {
+            Task task = this.tasks.get(index);
 
-            if (selected.matches(".+ \u2713")) {
-                this.taskDoneCheckBox.setSelected(true);
-            } else {
-                this.taskDoneCheckBox.setSelected(false);
-            }
+            /* Update fields */
+            this.taskTitleField.setText(task.getTitle());
+            this.taskPriorityComboBox.setSelectedIndex(task.getPriority());
+            this.taskDoneCheckBox.setSelected(task.getIsDone());
+            this.taskDetailsArea.setText(task.getNotes());
         }
         else {
             /* Clear the fields */
@@ -348,36 +343,34 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_taskListValueChanged
 
     private void taskTitleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskTitleFieldActionPerformed
-        if (this.taskList.getSelectedValue() != null) {
-            String title = this.taskTitleField.getText();
-            int index = this.taskList.getSelectedIndex();
-
-            this.listModel.setElementAt(title, index);
-            this.taskTitleField.setText(title);
-            this.tasks.get(index).setTitle(title);
-        } else {
-            /* Either add new item or display warning */
-        }
-    }//GEN-LAST:event_taskTitleFieldActionPerformed
-
-    private void taskDoneCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskDoneCheckBoxActionPerformed
         int index = this.taskList.getSelectedIndex();
 
-        if (index >= 0) {
-            String selected = this.listModel.getElementAt(index).toString();
+        if (index > -1) {
+            Task task = this.tasks.get(index);
 
-            if (this.taskDoneCheckBox.isSelected() && !selected.matches(".+ \u2713")) {
+            /* Update task */
+            task.setTitle(this.taskTitleField.getText());
+            task.setPriority(this.taskPriorityComboBox.getSelectedIndex());
+            task.setIsDone(this.taskDoneCheckBox.isSelected());
+            task.setNotes(this.taskDetailsArea.getText());
+
+            /* Update title in list */
+            String selected = task.getTitle();
+
+            if (task.getIsDone() && !selected.matches(".+ \u2713")) {
                 selected += " \u2713";
-                this.tasks.get(index).setIsDone(true);
-            } else {
+            }
+            else if (!task.getIsDone() && selected.matches(".+ \u2713")) {
                 int length = selected.length();
                 selected = selected.substring(0, length-2);
-                this.tasks.get(index).setIsDone(false);
             }
 
             this.listModel.setElementAt(selected, index);
         }
-    }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
+        else {
+            /* Either add new item or display warning */
+        }
+    }//GEN-LAST:event_taskTitleFieldActionPerformed
 
     private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
         File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
