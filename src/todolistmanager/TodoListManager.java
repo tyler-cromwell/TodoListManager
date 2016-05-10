@@ -5,6 +5,7 @@ import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -25,7 +26,7 @@ public class TodoListManager extends javax.swing.JFrame {
      */
     public TodoListManager() {
         initComponents();
-        
+
         /* Set the Submit button to react to the "Enter" key */
         this.getRootPane().setDefaultButton(this.taskSubmitButton);
 
@@ -361,18 +362,8 @@ public class TodoListManager extends javax.swing.JFrame {
             task.setIsDone(this.taskDoneCheckBox.isSelected());
             task.setNotes(this.taskDetailsArea.getText());
 
-            /* Update title in list */
-            String selected = task.getTitle();
-
-            if (task.getIsDone() && !selected.matches(".+ \u2713")) {
-                selected += " \u2713";
-            }
-            else if (!task.getIsDone() && selected.matches(".+ \u2713")) {
-                int length = selected.length();
-                selected = selected.substring(0, length-2);
-            }
-
-            this.listModel.setElementAt(selected, index);
+            /* Sort based on task Priority */
+            this.sortTaskList();
         }
         else {
             /* Either add new item or display warning */
@@ -416,6 +407,25 @@ public class TodoListManager extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_printMenuItemActionPerformed
+
+    private void sortTaskList() {
+        Collections.sort(this.tasks);
+        this.listModel.removeAllElements();
+
+        for (Task task : this.tasks) {
+            String selected = task.getTitle();
+
+            if (task.getIsDone() && !selected.matches(".+ \u2713")) {
+                selected += " \u2713";
+            }
+            else if (!task.getIsDone() && selected.matches(".+ \u2713")) {
+                int length = selected.length();
+                selected = selected.substring(0, length-2);
+            }
+
+            this.listModel.addElement(selected);
+        }
+    }
 
     /**
      * @param args the command line arguments
