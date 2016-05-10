@@ -87,8 +87,8 @@ public class TodoListManager extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("To-Do List Manager");
-        setMinimumSize(new java.awt.Dimension(450, 300));
-        setPreferredSize(new java.awt.Dimension(450, 300));
+        setMinimumSize(new java.awt.Dimension(440, 300));
+        setPreferredSize(new java.awt.Dimension(440, 300));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWeights = new double[] {0.0, 1.0};
         layout.rowWeights = new double[] {1.0};
@@ -227,7 +227,7 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 10, 10);
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 10);
         getContentPane().add(taskDetailsPanel, gridBagConstraints);
 
         fileMenu.setText("File");
