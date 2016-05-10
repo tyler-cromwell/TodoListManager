@@ -3,7 +3,7 @@ package todolistmanager;
 /**
  * @author Souley Bane, Tyler Cromwell
  */
-public class Task {
+public class Task implements Comparable {
     private String title;
     private int priority;
     private boolean isDone;
@@ -15,7 +15,7 @@ public class Task {
         this.isDone = false;
         this.notes = "";
     }
-    
+
     public String getTitle() {
         return this.title;
     }
@@ -23,11 +23,11 @@ public class Task {
     public int getPriority() {
         return this.priority;
     }
-    
+
     public String getNotes() {
         return this.notes;
     }
-    
+
     public boolean getIsDone(){
         return this.isDone;
     }
@@ -46,5 +46,11 @@ public class Task {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    @Override
+    public int compareTo(Object object) {
+        Task other = (Task) object;
+        return (this.priority - other.priority);
     }
 }

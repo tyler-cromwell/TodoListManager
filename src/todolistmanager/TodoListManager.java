@@ -5,6 +5,7 @@ import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -25,6 +26,9 @@ public class TodoListManager extends javax.swing.JFrame {
      */
     public TodoListManager() {
         initComponents();
+
+        /* Set the Submit button to react to the "Enter" key */
+        this.getRootPane().setDefaultButton(this.taskSubmitButton);
 
         /* Finish priority initalization */
         for (Priority p : Priority.values()) {
@@ -65,6 +69,7 @@ public class TodoListManager extends javax.swing.JFrame {
         removeTaskButton = new javax.swing.JButton();
         taskListScrollPane = new javax.swing.JScrollPane();
         taskList = new javax.swing.JList<>();
+        taskSubmitButton = new javax.swing.JButton();
         taskDetailsPanel = new javax.swing.JPanel();
         taskDetailsScrollPane = new javax.swing.JScrollPane();
         taskDetailsArea = new javax.swing.JTextArea();
@@ -76,14 +81,14 @@ public class TodoListManager extends javax.swing.JFrame {
         taskDoneCheckBox = new javax.swing.JCheckBox();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        loadMenuItem = new javax.swing.JMenuItem();
+        openMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
         printMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("To-Do List Manager");
-        setMinimumSize(new java.awt.Dimension(464, 261));
-        setPreferredSize(new java.awt.Dimension(464, 261));
+        setMinimumSize(new java.awt.Dimension(440, 300));
+        setPreferredSize(new java.awt.Dimension(440, 300));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWeights = new double[] {0.0, 1.0};
         layout.rowWeights = new double[] {1.0};
@@ -91,7 +96,7 @@ public class TodoListManager extends javax.swing.JFrame {
 
         java.awt.GridBagLayout taskListPanelLayout = new java.awt.GridBagLayout();
         taskListPanelLayout.columnWeights = new double[] {1.0};
-        taskListPanelLayout.rowWeights = new double[] {0.0, 1.0, 0.0};
+        taskListPanelLayout.rowWeights = new double[] {0.0, 1.0, 0.0, 0.0};
         taskListPanel.setLayout(taskListPanelLayout);
 
         taskListLabel.setText("Tasks");
@@ -140,6 +145,18 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         taskListPanel.add(taskListScrollPane, gridBagConstraints);
 
+        taskSubmitButton.setText("Submit");
+        taskSubmitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                taskSubmitButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        taskListPanel.add(taskSubmitButton, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -162,19 +179,13 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 10);
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         taskDetailsPanel.add(taskDetailsScrollPane, gridBagConstraints);
-
-        taskTitleField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                taskTitleFieldActionPerformed(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 0);
         taskDetailsPanel.add(taskTitleField, gridBagConstraints);
 
         taskTitleLabel.setText("Title:");
@@ -183,7 +194,6 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskTitleLabel, gridBagConstraints);
 
         taskNotesLabel.setText("Notes:");
@@ -191,7 +201,6 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskNotesLabel, gridBagConstraints);
 
         taskPriorityLabel.setText("Priority:");
@@ -199,44 +208,38 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskPriorityLabel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskPriorityComboBox, gridBagConstraints);
 
         taskDoneCheckBox.setText("Is Done?");
-        taskDoneCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                taskDoneCheckBoxActionPerformed(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         taskDetailsPanel.add(taskDoneCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 10);
         getContentPane().add(taskDetailsPanel, gridBagConstraints);
 
         fileMenu.setText("File");
 
-        loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        loadMenuItem.setText("Load");
-        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openMenuItem.setText("Open");
+        openMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadMenuItemActionPerformed(evt);
+                openMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(loadMenuItem);
+        fileMenu.add(openMenuItem);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setText("Save");
@@ -271,9 +274,9 @@ public class TodoListManager extends javax.swing.JFrame {
         this.taskDetailsArea.setText("");
 
         /* Add and select the new item */
+        this.tasks.add(new Task("New Item"));
         this.listModel.addElement("New Item");
         this.taskList.setSelectedIndex(this.listModel.getSize()-1);
-        this.tasks.add(new Task("New Item"));
     }//GEN-LAST:event_addTaskButtonActionPerformed
 
     private void removeTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTaskButtonActionPerformed
@@ -286,8 +289,8 @@ public class TodoListManager extends javax.swing.JFrame {
             int choice = JOptionPane.showConfirmDialog(this, "Are you sure?");
 
             if (choice == JOptionPane.YES_OPTION) {
-                this.listModel.remove(selected);
                 this.tasks.remove(selected);
+                this.listModel.remove(selected);
             }
         }
     }//GEN-LAST:event_removeTaskButtonActionPerformed
@@ -322,21 +325,34 @@ public class TodoListManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
-    private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
-        System.out.println("loadMenuItemActionPerformed: Loading from data-store");
-    }//GEN-LAST:event_loadMenuItemActionPerformed
+    private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
+        File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
+        FileSystemView cfsv = new CustomFileSystemView(root);
+        JFileChooser chooser = new JFileChooser(cfsv);
+        int option = chooser.showOpenDialog(this);
+
+        switch (option) {
+            case JFileChooser.ERROR_OPTION:
+                JOptionPane.showMessageDialog(this, "Failed to open file", "Open", JOptionPane.WARNING_MESSAGE);
+                return;
+            case JFileChooser.CANCEL_OPTION:
+                return;
+            default:
+                break;
+        }
+    }//GEN-LAST:event_openMenuItemActionPerformed
 
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
-        String selected = this.taskList.getSelectedValue();
+        int index = this.taskList.getSelectedIndex();
 
-        if (selected != null) {
-            this.taskTitleField.setText(selected);
+        if (index > -1) {
+            Task task = this.tasks.get(index);
 
-            if (selected.matches(".+ \u2713")) {
-                this.taskDoneCheckBox.setSelected(true);
-            } else {
-                this.taskDoneCheckBox.setSelected(false);
-            }
+            /* Update fields */
+            this.taskTitleField.setText(task.getTitle());
+            this.taskPriorityComboBox.setSelectedIndex(task.getPriority());
+            this.taskDoneCheckBox.setSelected(task.getIsDone());
+            this.taskDetailsArea.setText(task.getNotes());
         }
         else {
             /* Clear the fields */
@@ -347,37 +363,25 @@ public class TodoListManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_taskListValueChanged
 
-    private void taskTitleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskTitleFieldActionPerformed
-        if (this.taskList.getSelectedValue() != null) {
-            String title = this.taskTitleField.getText();
-            int index = this.taskList.getSelectedIndex();
-
-            this.listModel.setElementAt(title, index);
-            this.taskTitleField.setText(title);
-            this.tasks.get(index).setTitle(title);
-        } else {
-            /* Either add new item or display warning */
-        }
-    }//GEN-LAST:event_taskTitleFieldActionPerformed
-
-    private void taskDoneCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskDoneCheckBoxActionPerformed
+    private void taskSubmitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskSubmitButtonActionPerformed
         int index = this.taskList.getSelectedIndex();
 
-        if (index >= 0) {
-            String selected = this.listModel.getElementAt(index).toString();
+        if (index > -1) {
+            Task task = this.tasks.get(index);
 
-            if (this.taskDoneCheckBox.isSelected() && !selected.matches(".+ \u2713")) {
-                selected += " \u2713";
-                this.tasks.get(index).setIsDone(true);
-            } else {
-                int length = selected.length();
-                selected = selected.substring(0, length-2);
-                this.tasks.get(index).setIsDone(false);
-            }
+            /* Update task */
+            task.setTitle(this.taskTitleField.getText());
+            task.setPriority(this.taskPriorityComboBox.getSelectedIndex());
+            task.setIsDone(this.taskDoneCheckBox.isSelected());
+            task.setNotes(this.taskDetailsArea.getText());
 
-            this.listModel.setElementAt(selected, index);
+            /* Sort based on task Priority */
+            this.sortTaskList();
         }
-    }//GEN-LAST:event_taskDoneCheckBoxActionPerformed
+        else {
+            /* Either add new item or display warning */
+        }
+    }//GEN-LAST:event_taskSubmitButtonActionPerformed
 
     private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
         File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
@@ -417,6 +421,25 @@ public class TodoListManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_printMenuItemActionPerformed
 
+    private void sortTaskList() {
+        Collections.sort(this.tasks);
+        this.listModel.removeAllElements();
+
+        for (Task task : this.tasks) {
+            String selected = task.getTitle();
+
+            if (task.getIsDone() && !selected.matches(".+ \u2713")) {
+                selected += " \u2713";
+            }
+            else if (!task.getIsDone() && selected.matches(".+ \u2713")) {
+                int length = selected.length();
+                selected = selected.substring(0, length-2);
+            }
+
+            this.listModel.addElement(selected);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -446,8 +469,8 @@ public class TodoListManager extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTaskButton;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem printMenuItem;
     private javax.swing.JButton removeTaskButton;
     private javax.swing.JMenuItem saveMenuItem;
@@ -463,6 +486,7 @@ public class TodoListManager extends javax.swing.JFrame {
     private javax.swing.JLabel taskNotesLabel;
     private javax.swing.JComboBox<String> taskPriorityComboBox;
     private javax.swing.JLabel taskPriorityLabel;
+    private javax.swing.JButton taskSubmitButton;
     private javax.swing.JTextField taskTitleField;
     private javax.swing.JLabel taskTitleLabel;
     // End of variables declaration//GEN-END:variables

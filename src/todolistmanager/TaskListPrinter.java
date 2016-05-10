@@ -23,9 +23,9 @@ public class TaskListPrinter implements Printable {
     private final int PAGE_HEIGHT = 792;
     private final int IMAGEABLE_WIDTH = 468;
     private final int IMAGEABLE_HEIGHT = 648;
+    private final ArrayList<String> textLines;
+    private final File file;
     private int[] pageBreaks;
-    private ArrayList<String> textLines;
-    private File file;
 
     public TaskListPrinter(File file) {
         this.textLines = new ArrayList();
