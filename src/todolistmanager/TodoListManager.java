@@ -12,6 +12,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileSystemView;
+import org.apache.commons.lang3.WordUtils;
+
 
 /**
  * @author Tyler Cromwell
@@ -310,13 +312,14 @@ public class TodoListManager extends javax.swing.JFrame {
             default:
                 break;
         }
-
+        
         PrintWriter pr;
         try {
             pr = new PrintWriter(chooser.getSelectedFile());
             for(int i = 0; i < this.listModel.getSize(); i++) {
                 pr.println("\u2022" + this.tasks.get(i).getTitle());
-                //pr.println("\t" + taskDetailsArea.getText());
+                String nts = this.tasks.get(i).getNotes();
+                pr.println("\t" + WordUtils.wrap(nts, 40));
             }
             pr.close();
         }
