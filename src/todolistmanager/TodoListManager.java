@@ -25,6 +25,9 @@ public class TodoListManager extends javax.swing.JFrame {
      */
     public TodoListManager() {
         initComponents();
+        
+        /* Set the Submit button to react to the "Enter" key */
+        this.getRootPane().setDefaultButton(this.taskSubmitButton);
 
         /* Finish priority initalization */
         for (Priority p : Priority.values()) {
@@ -65,6 +68,7 @@ public class TodoListManager extends javax.swing.JFrame {
         removeTaskButton = new javax.swing.JButton();
         taskListScrollPane = new javax.swing.JScrollPane();
         taskList = new javax.swing.JList<>();
+        taskSubmitButton = new javax.swing.JButton();
         taskDetailsPanel = new javax.swing.JPanel();
         taskDetailsScrollPane = new javax.swing.JScrollPane();
         taskDetailsArea = new javax.swing.JTextArea();
@@ -82,8 +86,8 @@ public class TodoListManager extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("To-Do List Manager");
-        setMinimumSize(new java.awt.Dimension(460, 260));
-        setPreferredSize(new java.awt.Dimension(460, 260));
+        setMinimumSize(new java.awt.Dimension(450, 300));
+        setPreferredSize(new java.awt.Dimension(450, 300));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWeights = new double[] {0.0, 1.0};
         layout.rowWeights = new double[] {1.0};
@@ -91,7 +95,7 @@ public class TodoListManager extends javax.swing.JFrame {
 
         java.awt.GridBagLayout taskListPanelLayout = new java.awt.GridBagLayout();
         taskListPanelLayout.columnWeights = new double[] {1.0};
-        taskListPanelLayout.rowWeights = new double[] {0.0, 1.0, 0.0};
+        taskListPanelLayout.rowWeights = new double[] {0.0, 1.0, 0.0, 0.0};
         taskListPanel.setLayout(taskListPanelLayout);
 
         taskListLabel.setText("Tasks");
@@ -140,6 +144,18 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         taskListPanel.add(taskListScrollPane, gridBagConstraints);
 
+        taskSubmitButton.setText("Submit");
+        taskSubmitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                taskSubmitButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        taskListPanel.add(taskSubmitButton, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -162,19 +178,13 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 10);
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         taskDetailsPanel.add(taskDetailsScrollPane, gridBagConstraints);
-
-        taskTitleField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                taskTitleFieldActionPerformed(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 0);
         taskDetailsPanel.add(taskTitleField, gridBagConstraints);
 
         taskTitleLabel.setText("Title:");
@@ -183,7 +193,6 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskTitleLabel, gridBagConstraints);
 
         taskNotesLabel.setText("Notes:");
@@ -191,7 +200,6 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskNotesLabel, gridBagConstraints);
 
         taskPriorityLabel.setText("Priority:");
@@ -199,13 +207,12 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskPriorityLabel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         taskDetailsPanel.add(taskPriorityComboBox, gridBagConstraints);
 
         taskDoneCheckBox.setText("Is Done?");
@@ -213,13 +220,13 @@ public class TodoListManager extends javax.swing.JFrame {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         taskDetailsPanel.add(taskDoneCheckBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 10, 10);
         getContentPane().add(taskDetailsPanel, gridBagConstraints);
 
         fileMenu.setText("File");
@@ -342,7 +349,7 @@ public class TodoListManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_taskListValueChanged
 
-    private void taskTitleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskTitleFieldActionPerformed
+    private void taskSubmitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskSubmitButtonActionPerformed
         int index = this.taskList.getSelectedIndex();
 
         if (index > -1) {
@@ -370,7 +377,7 @@ public class TodoListManager extends javax.swing.JFrame {
         else {
             /* Either add new item or display warning */
         }
-    }//GEN-LAST:event_taskTitleFieldActionPerformed
+    }//GEN-LAST:event_taskSubmitButtonActionPerformed
 
     private void printMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printMenuItemActionPerformed
         File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
@@ -456,6 +463,7 @@ public class TodoListManager extends javax.swing.JFrame {
     private javax.swing.JLabel taskNotesLabel;
     private javax.swing.JComboBox<String> taskPriorityComboBox;
     private javax.swing.JLabel taskPriorityLabel;
+    private javax.swing.JButton taskSubmitButton;
     private javax.swing.JTextField taskTitleField;
     private javax.swing.JLabel taskTitleLabel;
     // End of variables declaration//GEN-END:variables
