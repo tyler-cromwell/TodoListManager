@@ -5,6 +5,8 @@ import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author Tyler Cromwell
+ * 
+ * Forces JFileChooser to stay within a certain directory.
  */
 public class CustomFileSystemView extends FileSystemView {
 	File root;
