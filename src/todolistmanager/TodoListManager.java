@@ -81,7 +81,7 @@ public class TodoListManager extends javax.swing.JFrame {
         taskDoneCheckBox = new javax.swing.JCheckBox();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        loadMenuItem = new javax.swing.JMenuItem();
+        openMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
         printMenuItem = new javax.swing.JMenuItem();
 
@@ -232,14 +232,14 @@ public class TodoListManager extends javax.swing.JFrame {
 
         fileMenu.setText("File");
 
-        loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        loadMenuItem.setText("Load");
-        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openMenuItem.setText("Open");
+        openMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadMenuItemActionPerformed(evt);
+                openMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(loadMenuItem);
+        fileMenu.add(openMenuItem);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setText("Save");
@@ -325,9 +325,22 @@ public class TodoListManager extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
-    private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
-        System.out.println("loadMenuItemActionPerformed: Loading from data-store");
-    }//GEN-LAST:event_loadMenuItemActionPerformed
+    private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
+        File root = new File(System.getProperty("user.home") +"\\"+ TodoListManager.PROGRAM_DIR);
+        FileSystemView cfsv = new CustomFileSystemView(root);
+        JFileChooser chooser = new JFileChooser(cfsv);
+        int option = chooser.showOpenDialog(this);
+
+        switch (option) {
+            case JFileChooser.ERROR_OPTION:
+                JOptionPane.showMessageDialog(this, "Failed to open file", "Open", JOptionPane.WARNING_MESSAGE);
+                return;
+            case JFileChooser.CANCEL_OPTION:
+                return;
+            default:
+                break;
+        }
+    }//GEN-LAST:event_openMenuItemActionPerformed
 
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
         int index = this.taskList.getSelectedIndex();
@@ -456,8 +469,8 @@ public class TodoListManager extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTaskButton;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem printMenuItem;
     private javax.swing.JButton removeTaskButton;
     private javax.swing.JMenuItem saveMenuItem;
