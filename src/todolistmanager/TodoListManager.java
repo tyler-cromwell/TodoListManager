@@ -20,12 +20,18 @@ public class TodoListManager extends javax.swing.JFrame {
     private static final String PROGRAM_DIR = "todo";
     private final DefaultListModel listModel;
     private final ArrayList<Task> tasks;
+    private Task currentTask;
+    private int currentIndex;
+    private boolean checkTask;
 
     /**
      * Creates new form TodoListManager
      */
     public TodoListManager() {
         initComponents();
+
+        /* Set tooltips */
+        this.taskSubmitButton.setToolTipText("Save changes to the current task");
 
         /* Set the Submit button to react to the "Enter" key */
         this.getRootPane().setDefaultButton(this.taskSubmitButton);
@@ -274,7 +280,7 @@ public class TodoListManager extends javax.swing.JFrame {
         this.taskDetailsArea.setText("");
 
         /* Add and select the new item */
-        this.tasks.add(new Task("New Item"));
+        this.tasks.add(new Task(""));
         this.listModel.addElement("New Item");
         this.taskList.setSelectedIndex(this.listModel.getSize()-1);
     }//GEN-LAST:event_addTaskButtonActionPerformed
@@ -343,24 +349,49 @@ public class TodoListManager extends javax.swing.JFrame {
     }//GEN-LAST:event_openMenuItemActionPerformed
 
     private void taskListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_taskListValueChanged
-        int index = this.taskList.getSelectedIndex();
+        if (this.checkTask && this.currentTask != null && this.currentIndex > -1) {
+            if (!this.currentTask.getTitle().equals(this.taskTitleField.getText()) ||
+                this.currentTask.getIsDone() != this.taskDoneCheckBox.isSelected() ||
+                this.currentTask.getPriority() != this.taskPriorityComboBox.getSelectedIndex() ||
+                !this.currentTask.getNotes().equals(this.taskDetailsArea.getText())
+            ) {
+                int choice = JOptionPane.showConfirmDialog(this, "You have unsaved changes!\nAre you sure you want to change tasks?");
 
-        if (index > -1) {
-            Task task = this.tasks.get(index);
+                if (choice != JOptionPane.YES_OPTION) {
+                    this.checkTask = false;
+                    this.taskList.setSelectedIndex(this.currentIndex);
+                    return;
+                }
+            }
+        }
 
-            /* Update fields */
-            this.taskTitleField.setText(task.getTitle());
-            this.taskPriorityComboBox.setSelectedIndex(task.getPriority());
-            this.taskDoneCheckBox.setSelected(task.getIsDone());
-            this.taskDetailsArea.setText(task.getNotes());
+        if (this.checkTask) {
+            int index = this.taskList.getSelectedIndex();
+
+            if (index > -1) {
+                Task task = this.tasks.get(index);
+                this.currentTask = task;
+                this.currentIndex = index;
+
+                /* Update fields */
+                this.taskTitleField.setText(task.getTitle());
+                this.taskPriorityComboBox.setSelectedIndex(task.getPriority());
+                this.taskDoneCheckBox.setSelected(task.getIsDone());
+                this.taskDetailsArea.setText(task.getNotes());
+            }
+            else {
+                this.currentTask = null;
+                this.currentIndex = -1;
+
+                /* Clear the fields */
+                this.taskTitleField.setText("");
+                this.taskDoneCheckBox.setSelected(false);
+                this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
+                this.taskDetailsArea.setText("");
+            }
         }
-        else {
-            /* Clear the fields */
-            this.taskTitleField.setText("");
-            this.taskDoneCheckBox.setSelected(false);
-            this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
-            this.taskDetailsArea.setText("");
-        }
+
+        this.checkTask = true;
     }//GEN-LAST:event_taskListValueChanged
 
     private void taskSubmitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_taskSubmitButtonActionPerformed
@@ -427,6 +458,10 @@ public class TodoListManager extends javax.swing.JFrame {
 
         for (Task task : this.tasks) {
             String selected = task.getTitle();
+
+            if (selected.equalsIgnoreCase("")) {
+                selected = "New Item";
+            }
 
             if (task.getIsDone() && !selected.matches(".+ \u2713")) {
                 selected += " \u2713";
