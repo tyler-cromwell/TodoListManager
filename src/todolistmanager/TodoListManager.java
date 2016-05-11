@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -325,9 +327,24 @@ public class TodoListManager extends javax.swing.JFrame {
         PrintWriter pr;
         try {
             pr = new PrintWriter(chooser.getSelectedFile());
-            for(int i = 0; i < this.listModel.getSize(); i++) {
-                pr.println("\u2022" + this.tasks.get(i).getTitle());
-                pr.println(this.tasks.get(i).getNotes());
+            for (int i = 0; i < this.listModel.getSize(); i++) {
+                Task task = tasks.get(i);
+
+                if (task.getTitle().equalsIgnoreCase("")) {
+                    pr.print("\u2022New Item");
+                } else {
+                    pr.print("\u2022"+ task.getTitle());
+                }
+
+                pr.print(", "+ task.getPriority());
+
+                if (task.getIsDone()) {
+                    pr.println(", \u2713");
+                } else {
+                    pr.println(", \u2717");
+                }
+
+                pr.println(task.getNotes());
             }
             pr.close();
         }
@@ -365,20 +382,36 @@ public class TodoListManager extends javax.swing.JFrame {
         
         try {
             Scanner s = new Scanner(chooser.getSelectedFile().getAbsoluteFile());
-            while(s.hasNextLine()){
+            while (s.hasNextLine()) {
                 String line = s.nextLine();
                 StringBuilder sb = new StringBuilder(line);
                 //System.out.println(line);
                 
-                if (line.startsWith("\u2022")){
+                if (line.startsWith("\u2022")) {
                     sb.deleteCharAt(0);
-                    line = sb.toString();
-                    Task task = new Task(line);
+                    String[] tokens = sb.toString().split(", ");
+                    Task task = new Task(tokens[0]);
+
+                    int priority = Integer.parseInt(tokens[1]);
+                    task.setPriority(priority);
+
+                    if (tokens[2].equalsIgnoreCase("\u2713")) {
+                        task.setIsDone(true);
+                    } else {
+                        task.setIsDone(false);
+                    }
+
                     String note = s.nextLine();
                     task.setNotes(note);
                     
                     this.tasks.add(task);
-                    this.listModel.addElement(line);
+                    String title = tokens[0];
+
+                    if (tokens[2].equalsIgnoreCase("\u2713")) {
+                        this.listModel.addElement(title +" \u2713");
+                    } else {
+                        this.listModel.addElement(title);
+                    }
                 }
             }
             s.close();
