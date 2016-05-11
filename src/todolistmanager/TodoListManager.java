@@ -3,16 +3,19 @@ package todolistmanager;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileSystemView;
-import org.apache.commons.lang3.WordUtils;
 
 
 /**
@@ -318,8 +321,7 @@ public class TodoListManager extends javax.swing.JFrame {
             pr = new PrintWriter(chooser.getSelectedFile());
             for(int i = 0; i < this.listModel.getSize(); i++) {
                 pr.println("\u2022" + this.tasks.get(i).getTitle());
-                String nts = this.tasks.get(i).getNotes();
-                pr.println("\t" + WordUtils.wrap(nts, 40));
+                pr.println(this.tasks.get(i).getNotes());
             }
             pr.close();
         }
@@ -342,6 +344,41 @@ public class TodoListManager extends javax.swing.JFrame {
                 return;
             default:
                 break;
+        }
+
+        this.taskTitleField.setText("");
+        this.taskDoneCheckBox.setSelected(false);
+        this.taskPriorityComboBox.setSelectedIndex(Priority.NORMAL.ordinal());
+        this.taskDetailsArea.setText("");
+        this.listModel.removeAllElements();
+        this.taskList.removeAll();
+        
+        while (this.tasks.size() > 0) {
+            this.tasks.remove(0);
+        }        
+        
+        try {
+            Scanner s = new Scanner(chooser.getSelectedFile().getAbsoluteFile());
+            while(s.hasNextLine()){
+                String line = s.nextLine();
+                StringBuilder sb = new StringBuilder(line);
+                //System.out.println(line);
+                
+                if (line.startsWith("\u2022")){
+                    sb.deleteCharAt(0);
+                    line = sb.toString();
+                    Task task = new Task(line);
+                    String note = s.nextLine();
+                    task.setNotes(note);
+                    
+                    this.tasks.add(task);
+                    this.listModel.addElement(line);
+                }
+            }
+            s.close();
+        }
+        catch (FileNotFoundException ex) {
+            System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_openMenuItemActionPerformed
 
